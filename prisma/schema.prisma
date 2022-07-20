@@ -48,7 +48,7 @@ model TeacherDiscipline {
 
   tests Test[]
 
-  @@map("teacherDisciplines")
+  @@map("teachersDisciplines")
 }
 
 model Teacher {
