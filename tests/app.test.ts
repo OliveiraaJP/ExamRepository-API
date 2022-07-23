@@ -1,9 +1,47 @@
+import prisma from "../src/config/database.js";
 import supertest from "supertest";
 import app from "../src/app.js";
+import * as userFactory from "./factories/userFactory.js"
 
-describe("User tests signup/in", () => {
-    it('sum 2 + 2 gives 4',async () => {
-        const sum = 2 + 2
-        expect(sum).toStrictEqual(4)
+
+beforeEach(async () => {
+    await prisma.$executeRaw`TRUNCATE TABLE users`
+})
+
+describe("User Tests", () => {
+    it("Create a user", async () => {
+        const login = userFactory.createUser()
+        const response = await supertest(app).post(`/signup`).send(login)
+        expect(response.statusCode).toBe(201)
+
+        const user = await prisma.user.findFirst({
+            where: { email: login.email }
+        })
+
+        // check user
+        expect(user.email).toBe(login.email)
     })
+
+    it("Create a duplicate user", async () => {
+        const login = userFactory.createUser()
+        await supertest(app).post(`/signup`).send(login)
+        const response = await supertest(app).post(`/signup`).send(login)
+        expect(response.statusCode).toBe(400)
+    })
+
+    it("Login a user", async () => {
+        const login = userFactory.createUser()
+        await supertest(app).post(`/signup`).send(login)
+        const response = await supertest(app).post(`/signin`).send({
+            email: login.email,
+            password: login.password
+        })
+        const token = response.body.token
+        expect(token).not.toBeNull()
+    })
+})
+
+afterAll(async () => {
+    await prisma.$executeRaw`TRUNCATE TABLE users`
+    await prisma.$disconnect()
 })

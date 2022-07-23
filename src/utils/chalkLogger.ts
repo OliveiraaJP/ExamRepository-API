@@ -1,17 +1,17 @@
-import chalk from 'chalk';
+import colors from 'colors';
 import { NextFunction, Request, Response } from 'express';
 
 
 const types = {
-    middleware: chalk.bold.magenta('  [Middleware]'),
-    controller: chalk.bold.blueBright('[Controller]'),
-    service: chalk.bold.magenta('    [Service]'),
-    db: chalk.bold.blue('      [db]'),
-    api: chalk.bold.blue('      [API]'),
-    log: chalk.bold.gray.italic('[Log]'),
-    route: chalk.bold.blueBright('[Route]'),
-    server: chalk.bold.yellow('[Server]'),
-    error: chalk.bold.red('[ERROR]')
+    middleware: colors.bold.magenta('  [Middleware]'),
+    controller: colors.bold.green('[Controller]'),
+    service: colors.bold.magenta('    [Service]'),
+    db: colors.bold.blue('      [db]'),
+    api: colors.bold.blue('      [API]'),
+    log: colors.bold.gray.italic('[Log]'),
+    route: colors.bold.green('[Route]'),
+    server: colors.bold.yellow('[Server]'),
+    error: colors.bold.red('[ERROR]')
 };
 
 
