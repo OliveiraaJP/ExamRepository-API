@@ -20,8 +20,27 @@ async function createTest(testObj:TestData) {
     await testRepository.createTest(testObj)
 }
 
+async function getTests(groupBy: string) {
+    let response = null
+
+    if (groupBy === "disciplines"){
+        response = await testRepository.getTestsByDisciplines()
+    }
+
+    if (groupBy === "teachers"){
+        response = await testRepository.getTestsByTeachers()
+    }
+
+    if( response === null){
+        throw new AppError(404, 'Page not found, query string must be DISCIPLINES or TEACHERS')
+    }
+
+    return response
+}
+
 export {
     hasCategoryId,
     hasTeacherDisciplineId,
-    createTest
+    createTest,
+    getTests
 }
