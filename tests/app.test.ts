@@ -55,13 +55,24 @@ describe("User Tests", () => {
 describe("Create test Tests", () => {
     it("Create a test", async () => {
         const bearerToken = await testFactory.getToken()
-        console.log('TESTE 1')
-        console.log(bearerToken)
-        console.log('TESTE 2')
         const test = testFactory.createTest()
         const response = await supertest(app).post(`/tests`).send(test).set("Authorization", bearerToken)
         expect(response.statusCode).toBe(201)
     })
+
+    it("Create a test w/o token", async () => {
+        const test = testFactory.createTest()
+        const response = await supertest(app).post(`/tests`).send(test)
+        expect(response.statusCode).not.toBe(201)
+    })
+
+    it("Create a test w/ token but w/o valid values", async () => {
+        const bearerToken = await testFactory.getToken()
+        const test = testFactory.createFakeTest()
+        const response = await supertest(app).post(`/tests`).send(test).set("Authorization", bearerToken)
+        expect(response.statusCode).not.toBe(201)
+    })
+
 })
 
 describe("Get tests", () => {
