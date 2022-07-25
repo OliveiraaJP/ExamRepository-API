@@ -2,6 +2,7 @@ import prisma from "../src/config/database.js";
 import supertest from "supertest";
 import app from "../src/app.js";
 import * as userFactory from "./factories/userFactory.js"
+import * as testFactory from "./factories/testFactory.js"
 
 
 beforeEach(async () => {
@@ -38,6 +39,14 @@ describe("User Tests", () => {
         })
         const token = response.body.token
         expect(token).not.toBeNull()
+    })
+})
+
+describe("Create test Tests", () => {
+    it("Create a test", async () => {
+        const test = testFactory.createTest()
+        const response = await supertest(app).post(`/tests`).send(test)
+        expect(response.statusCode).toBe(201)
     })
 })
 
