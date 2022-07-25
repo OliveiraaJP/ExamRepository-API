@@ -8,7 +8,7 @@ import { testSchema } from "../schemas/testSchema.js";
 const testRouter = Router()
 
 
-testRouter.post('/tests', tokenValidator ,validateSchemaMiddleware(testSchema) ,createTest)
-testRouter.get('/tests', getTests)
+testRouter.post('/tests', tokenValidator, validateSchemaMiddleware(testSchema) ,createTest)
+testRouter.get('/tests', tokenValidator, getTests)
 
 export default testRouter

@@ -24,7 +24,7 @@ describe("User Tests", () => {
         expect(user.email).toBe(login.email)
     })
 
-    it("Create a duplicate user", async () => {
+    it("Create a duplicate user expect 400", async () => {
         const login = userFactory.createUser()
         await supertest(app).post(`/sign-up`).send(login)
         const response = await supertest(app).post(`/sign-up`).send(login)
@@ -33,24 +33,54 @@ describe("User Tests", () => {
 
     it("Login a user", async () => {
         const login = userFactory.createUser()
-        await supertest(app).post(`/signup`).send(login)
+        await supertest(app).post(`/sign-up`).send(login)
         const response = await supertest(app).post(`/sign-in`).send({
             email: login.email,
             password: login.password
         })
-        const token = response.body.token
+        const token = response.text
+        console.log('login')
+        console.log(token)
+        console.log('proximo')
         expect(token).not.toBeNull()
+    })
+
+    it("Login user w/ wrong credentials", async () => {
+        const login = {email: "errado@errado.com", password: "errofeio" }
+        const token = await supertest(app).post(`/sign-in`).send(login)
+        expect(token.statusCode).toBe(401)
     })
 })
 
 describe("Create test Tests", () => {
     it("Create a test", async () => {
-        const login = userFactory.createUser()
-        const loginData = await supertest(app).post(`/sign-up`).send(login)
-        const token = loginData.body.token
+        const bearerToken = await testFactory.getToken()
+        console.log('TESTE 1')
+        console.log(bearerToken)
+        console.log('TESTE 2')
         const test = testFactory.createTest()
-        const response = await supertest(app).post(`/tests`).send(test).set("Authorization", `Bearer ${token}`)
+        const response = await supertest(app).post(`/tests`).send(test).set("Authorization", bearerToken)
         expect(response.statusCode).toBe(201)
+    })
+})
+
+describe("Get tests", () => {
+    it('Get tests group by disciplines expect 200', async() => {
+        const bearerToken = await testFactory.getToken()
+        const response = await supertest(app).get(`/tests?groupBy=disciplines`).set("Authorization", bearerToken)
+        expect(response.statusCode).toBe(200)
+    });
+
+    it('Get tests group by teachers expect 200', async() => {
+        const bearerToken = await testFactory.getToken()
+        const response = await supertest(app).get(`/tests?groupBy=teachers`).set("Authorization", bearerToken)
+        expect(response.statusCode).toBe(200)
+    })
+
+    it('Get tests w/ group by expect 404', async() => {
+        const bearerToken = await testFactory.getToken()
+        const response = await supertest(app).get(`/tests`).set("Authorization", bearerToken)
+        expect(response.statusCode).toBe(404)
     })
 })
 

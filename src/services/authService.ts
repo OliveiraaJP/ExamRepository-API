@@ -20,7 +20,7 @@ const signin = async (userObj: UserData) => {
     const {email, password} = userObj
     const activeUser = await authRepository.getUser(email)
     if(!activeUser) {
-        throw new AppError(404, 'Invalid user!')
+        throw new AppError(401, 'Invalid user!')
     }
     const confirmPassword = bcrypt.compareSync(password, activeUser.password)
     if(!confirmPassword){
